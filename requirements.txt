@@ -1,0 +1,6 @@
+aioredis
+asyncio_redis
+aiomysql
+sqlalchemy
+python-dateutil
+motor
