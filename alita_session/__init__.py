@@ -16,10 +16,11 @@ class Session:
         if "session" in self.app.extensions:
             raise RuntimeError("Extensions session is not allow register repeated!")
         self.app.extensions.session = self
-        if not self.app.session_engine:
-            raise RuntimeError("App not session_engine configuration, please config it again!")
-        self.engine = import_module(self.app.session_engine)
-        self.session_manager = self.engine.SessionManager(app)
+        try:
+            self.engine = import_module(self.app.config['SESSION_ENGINE'])
+            self.session_manager = self.engine.SessionManager(app)
+        except KeyError:
+            raise RuntimeError("App config SESSION_ENGINE not existed, please config it again!")
 
         @self.app.before_request
         async def process_request(request):
