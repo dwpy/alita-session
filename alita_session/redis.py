@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import asyncio_redis
 from alita_session.base import *
 
 
-class RedisPoolMixin:
+class RedisSessionManager(SessionInterface):
     _pool = None
     _pool_size = 10
+
+    async def get_redis_pool(self):
+        raise NotImplementedError
 
     async def delete(self, session_key):
         pool = await self.get_redis_pool()
@@ -31,9 +35,11 @@ class RedisPoolMixin:
         await pool.set(**self.get_session_data(request.session))
 
 
-class SessionManager(SessionInterface, RedisPoolMixin):
+class SessionManager(RedisSessionManager):
     async def get_redis_pool(self):
         self.client_config.setdefault("poolsize", self._pool_size)
         if not self._pool:
-            self._pool = await asyncio_redis.Pool.create(loop=loop, **self.client_config)
+            loop = asyncio.get_event_loop()
+            self._pool = await asyncio_redis.Pool.create(
+                loop=loop, **self.client_config)
         return self._pool

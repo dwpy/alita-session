@@ -286,9 +286,15 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
         serialized = self.serializer.dumps(session_dict)
         return base64.b64encode(serialized.encode(self.charset)).decode(self.charset)
 
-    def decode(self, session_data):
-        if hasattr(session_data, 'session_data'):
-            session_data = session_data.session_data
+    def decode(self, session_object):
+        if isinstance(session_object, dict):
+            session_data = session_object.get('session_data')
+        elif hasattr(session_object, 'session_data'):
+            session_data = session_object.session_data
+        else:
+            session_data = session_object
+        if not session_data:
+            return None
         if isinstance(session_data, str):
             session_data = session_data.encode(self.charset)
         serialized = base64.b64decode(session_data)
@@ -333,7 +339,7 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
         )
 
     async def save_session(self, request):
-        raise self.save(request)
+        await self.save(request)
 
     async def cycle_session(self, session):
         session_key = self.get_session_key(session.session_id)
@@ -350,11 +356,8 @@ class NullSession(SessionInterface):
         pass
 
 
-loop = asyncio.get_event_loop()
-
 __all__ = [
     "NullSession",
     "SessionInterface",
     "UpdateError",
-    "loop"
 ]

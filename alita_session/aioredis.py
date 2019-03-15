@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import copy
+import asyncio
 import aioredis
-from alita_session.base import *
-from alita_session.redis import RedisPoolMixin
+from alita_session.redis import RedisSessionManager
 
 
-class AioSessionManager(SessionInterface, RedisPoolMixin):
+class SessionManager(RedisSessionManager):
     async def get_redis_pool(self):
-        self.client_config.setdefault("poolsize", self._pool_size)
-        host = self.client_config.pop("host")
-        port = self.client_config.pop("port")
         if not self._pool:
-            self._pool = await aioredis.create_redis_pool(
-                (host, port), loop=loop, **self.client_config)
+            self.client_config.setdefault("maxsize", self._pool_size)
+            _config = copy.copy(self.client_config)
+            address = _config.pop("host"), _config.pop("port", 6379)
+            loop = asyncio.get_event_loop()
+            self._pool = await aioredis.create_redis_pool(address, loop=loop, **_config)
         return self._pool

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import copy
+import asyncio
 import motor.motor_asyncio
 from datetime import datetime
 from alita_session.base import *
@@ -9,11 +11,15 @@ class SessionManager(SessionInterface):
     _client = None
     _db = None
     _collection = None
+    _database = None
 
     async def get_session_collection(self):
         if not self._collection:
-            self._client = motor.motor_asyncio.AsyncIOMotorClient(**self.client_config)
-            self._db = self._client[self.client_config['db']]
+            loop = asyncio.get_event_loop()
+            _config = copy.copy(self.client_config)
+            self._database = _config.pop('db', 'default')
+            self._client = motor.motor_asyncio.AsyncIOMotorClient(io_loop=loop, **_config)
+            self._db = self._client[self._database]
             self._collection = self._db[self.session_table_name]
         return self._collection
 
@@ -37,10 +43,10 @@ class SessionManager(SessionInterface):
         session = await self.exists(data['session_key'])
         collection = await self.get_session_collection()
         if not session:
-            await collection.insert_one(**data)
+            await collection.insert_one(data)
         else:
             if self.must_save:
-                await collection.update({
+                await collection.update_one({
                     'session_key': data['session_key']
                 }, {
                     '$set': {
