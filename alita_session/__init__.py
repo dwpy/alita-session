@@ -27,7 +27,6 @@ class Session:
         async def process_request(request):
             request.session = await self.session_manager.get_session(request)
             request.session_manager = self.session_manager
-            request.session['dw'] = 'asdasdadadas'
 
         @self.app.response_middleware
         async def process_response(request, response):
