@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 import base64
-import asyncio
 from uuid import uuid4
 from itsdangerous import Signer
 from collections import MutableMapping
