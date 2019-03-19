@@ -8,7 +8,7 @@ from collections import OrderedDict
 with io.open('README.md', 'rt', encoding='utf8') as f:
     readme = f.read()
 
-with io.open('alita/__init__.py', 'rt', encoding='utf8') as f:
+with io.open('alita_session/__init__.py', 'rt', encoding='utf8') as f:
     version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
 setup(
@@ -21,7 +21,7 @@ setup(
     )),
     license='BSD',
     author='Dongwei',
-    description='alita-session is session management extension for Alita。 ',
+    description='alita-session is session extension for Alita。 ',
     long_description=readme,
     long_description_content_type="text/markdown",
     packages=['alita_session'],
@@ -30,14 +30,6 @@ setup(
     platforms='any',
     python_requires='>=3.5',
     install_requires=[],
-    extras_require={
-        'dotenv': ['python-dotenv'],
-        'docs': [
-            'sphinx',
-            'pallets-sphinx-themes',
-            'sphinxcontrib-log-cabinet',
-        ]
-    },
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Web Environment',
