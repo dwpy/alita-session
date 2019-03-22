@@ -10,6 +10,8 @@ class Session:
         self.app = app
         self.engine = None
         self.session_manager = None
+        if app is not None:
+            self.init_app(app)
 
     def init_app(self, app):
         self.app = app
