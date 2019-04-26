@@ -19,11 +19,11 @@ class RedisSessionManager(SessionInterface):
         pool = await self.get_redis_pool()
         return await pool.get(session_key)
 
-    def get_session_data(self, session):
+    def get_session_data(self, session, expire=None):
         return dict(
             key=self.get_session_key(session),
             value=self.encode(session),
-            expire=self.get_expiry_age(session)
+            expire=expire or self.get_expiry_age(session)
         )
 
     async def get(self, request, session_key):
@@ -32,7 +32,13 @@ class RedisSessionManager(SessionInterface):
 
     async def save(self, request):
         pool = await self.get_redis_pool()
-        await pool.set(**self.get_session_data(request.session))
+        session_key = self.get_session_key(request.session)
+        if not await self.exists(session_key):
+            session_data = self.get_session_data(request.session)
+        else:
+            expire = await pool.ttl(session_key)
+            session_data = self.get_session_data(request.session, expire)
+        await pool.setex(**session_data)
 
 
 class SessionManager(RedisSessionManager):

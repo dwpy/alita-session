@@ -107,8 +107,7 @@ class SessionManager(SessionInterface):
                     self.session_model
                         .update()
                         .values(
-                            session_data=data['session_data'],
-                            expire_date=data['expire_date']
+                            session_data=data['session_data']
                         ).where(
                             self.session_model.columns.session_key == data['session_key']),
                     (

@@ -50,8 +50,7 @@ class SessionManager(SessionInterface):
                     'session_key': data['session_key']
                 }, {
                     '$set': {
-                        'session_data': data['session_data'],
-                        'expire_date': data['expire_date']
+                        'session_data': data['session_data']
                     }
                 })
             else:
