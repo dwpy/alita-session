@@ -2,7 +2,7 @@ import time
 from importlib import import_module
 from alita_session.utils import http_date
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 class Session:
