@@ -31,7 +31,7 @@ class SessionManager(SessionInterface):
         collection = await self.get_session_collection()
         return await collection.find_one({'session_key': session_key})
 
-    async def get(self, request, session_key):
+    async def get(self, session_key):
         collection = await self.get_session_collection()
         return await collection.find_one({
             'session_key': session_key,

@@ -4,3 +4,4 @@ aiomysql
 sqlalchemy
 python-dateutil
 motor
+aiofiles

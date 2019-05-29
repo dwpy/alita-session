@@ -26,7 +26,7 @@ class RedisSessionManager(SessionInterface):
             expire=expire or self.get_expiry_age(session)
         )
 
-    async def get(self, request, session_key):
+    async def get(self, session_key):
         pool = await self.get_redis_pool()
         return await pool.get(session_key)
 

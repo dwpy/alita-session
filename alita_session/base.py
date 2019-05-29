@@ -136,7 +136,7 @@ class SessionManagerMixin:
     async def delete(self, session_key):
         raise NotImplementedError()
 
-    async def get(self, request, session_key):
+    async def get(self, session_key):
         raise NotImplementedError()
 
     async def save(self, request):
@@ -247,7 +247,7 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
 
     def __init__(self, app, key_prefix=None, use_signer=False, permanent=False):
         super(SessionInterface, self).__init__(app, key_prefix, use_signer, permanent)
-        self.client_config = self.app.session_engine_config
+        self.client_config = self.app.session_engine_config or {}
         self.must_save = self.app.config.get('SESSION_MUST_SAVE', True)
         self.serializer = JSONSerializer()
         self.session_model = None
@@ -328,7 +328,7 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
                     permanent=self.permanent
                 )
         session_key = self.get_session_key(session_id)
-        val = await self.get(request, session_key)
+        val = await self.get(session_key)
         if val is not None:
             val = self.decode(val)
         return self.session_class(
@@ -342,13 +342,13 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
 
     async def cycle_session(self, session):
         session_key = self.get_session_key(session.session_id)
-        if session_key and self.exists(session_key):
+        if session_key and await self.exists(session_key):
             await self.delete(session_key)
         session.session_id = self._generate_session_id()
 
 
 class NullSession(SessionInterface):
-    async def get(self, request, session_key):
+    async def get(self, session_key):
         return None
 
     async def save(self, request):

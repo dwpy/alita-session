@@ -83,7 +83,7 @@ class SessionManager(SessionInterface):
                     self.session_model.columns.session_key == session_key),
             (session_key, ))
 
-    async def get(self, request, session_key):
+    async def get(self, session_key):
         return await self.fetchone(
             self.session_model
                 .select()
