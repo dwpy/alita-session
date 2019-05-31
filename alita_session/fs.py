@@ -16,7 +16,8 @@ class SessionManager(SessionInterface):
                  path=None, filename_template='fs_%s.sess', mode=0o644):
         super(SessionManager, self).__init__(app, key_prefix, use_signer, permanent)
         if path is None:
-            sd = self.client_config.get('SESSION_DIRECTORY')
+            sd = self.app.config.get('SESSION_DIRECTORY') or \
+                 self.client_config.get('SESSION_DIRECTORY')
             if sd:
                 path = os.path.abspath(os.path.expanduser(sd))
                 if not os.path.exists(path):
