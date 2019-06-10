@@ -249,6 +249,7 @@ class SessionInterface(BaseSessionInterface, SessionManagerMixin):
         super(SessionInterface, self).__init__(app, key_prefix, use_signer, permanent)
         self.client_config = self.app.session_engine_config or {}
         self.must_save = self.app.config.get('SESSION_MUST_SAVE', True)
+        self.auto_postpone = self.app.config.get('SESSION_AUTO_POSTPONE', True)
         self.serializer = JSONSerializer()
         self.session_model = None
         self.session_table_name = self.app.session_table_name

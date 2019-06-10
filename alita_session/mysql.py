@@ -103,12 +103,16 @@ class SessionManager(SessionInterface):
                 tuple(data.values()))
         else:
             if self.must_save:
+                update_data = {
+                    'session_data': data['session_data']
+                }
+                if self.auto_postpone:
+                    update_data['expire_date'] = data['expire_date']
                 await self.execute(
                     self.session_model
                         .update()
-                        .values(
-                            session_data=data['session_data']
-                        ).where(
+                        .values(**update_data)
+                        .where(
                             self.session_model.columns.session_key == data['session_key']),
                     (
                         data['session_data'],

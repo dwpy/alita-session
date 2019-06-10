@@ -46,12 +46,15 @@ class SessionManager(SessionInterface):
             await collection.insert_one(data)
         else:
             if self.must_save:
+                update_data = {
+                    'session_data': data['session_data']
+                }
+                if self.auto_postpone:
+                    update_data['expire_date'] = data['expire_date']
                 await collection.update_one({
                     'session_key': data['session_key']
                 }, {
-                    '$set': {
-                        'session_data': data['session_data']
-                    }
+                    '$set': update_data
                 })
             else:
                 raise UpdateError
