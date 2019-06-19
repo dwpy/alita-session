@@ -29,7 +29,9 @@ setup(
     zip_safe=False,
     platforms='any',
     python_requires='>=3.5',
-    install_requires=[],
+    install_requires=[
+        'python-dateutil'
+    ],
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Web Environment',
